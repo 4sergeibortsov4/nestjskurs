@@ -48,26 +48,26 @@ export class ArticleService {
             where: {slug: slug} 
         })
     }
-    // '?'
+
     async deleteArticle(slug: string, currentUserId: number): Promise<DeleteResult> {
-        const article = this.findBySlug(slug)
+        const article = await this.findBySlug(slug)
         if(!article) {
             throw new HttpException('Article does not exist', HttpStatus.NOT_FOUND)
         }
-        if((await article).author.id !== currentUserId) {
+        if(article.author.id !== currentUserId) {
             throw new HttpException('You are not an author', HttpStatus.FORBIDDEN)
         }
 
         return this.articleRepository.delete({slug})
     }
-    // '?'
+
     async updateArticle(slug: string, currentUserId: number, updateArticleDto: createArticleDto): Promise<ArticleEntity> {
-        const article = this.findBySlug(slug)
+        const article = await this.findBySlug(slug)
         console.log(article)
         if(!article) {
             throw new HttpException('Article does not exist', HttpStatus.NOT_FOUND)
         }
-        if((await article).author.id !== currentUserId) {
+        if(article.author.id !== currentUserId) {
             throw new HttpException('You are not an author', HttpStatus.FORBIDDEN)
         }
         Object.assign(article, updateArticleDto)
